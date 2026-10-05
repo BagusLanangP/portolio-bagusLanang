@@ -1,0 +1,126 @@
+/* =========================================================
+   ABOUT — cerita singkat + statistik
+   ========================================================= */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.about-text p {
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.about-text p + p {
+  margin-top: 18px;
+}
+
+.about-text b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 40px;
+}
+
+.stat {
+  padding: 22px 20px;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.stat-label {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.facts {
+  padding: 8px 28px;
+}
+
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.fact:last-child {
+  border-bottom: none;
+}
+
+.fact span:first-child {
+  color: var(--muted);
+}
+
+.fact span:last-child {
+  font-weight: 600;
+  text-align: right;
+}
+
+@media (max-width: 860px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* ---------- Mobile: teks & kartu dibuat lebih padat ---------- */
+@media (max-width: 560px) {
+  .about-text p {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .about-text p + p {
+    margin-top: 12px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .stat {
+    padding: 14px 12px;
+  }
+
+  .stat-value {
+    font-size: 19px;
+  }
+
+  .stat-label {
+    margin-top: 6px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .facts {
+    padding: 4px 18px;
+  }
+
+  .fact {
+    padding: 11px 0;
+    font-size: 13px;
+    gap: 12px;
+  }
+}

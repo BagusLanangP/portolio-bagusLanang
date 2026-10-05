@@ -1,0 +1,389 @@
+/* =========================================================
+   PROJECTS — grid kartu ringkas, pager, modal detail
+   Kartu dua kolom per baris. Klik kartu → modal berisi detail.
+   ========================================================= */
+
+/* ---------- Grid ---------- */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+}
+
+.project-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Thumbnail: pakai gaya browser-bar dari components.css */
+.pc-thumb {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.pc-thumb img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.pc-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  padding: 24px;
+}
+
+.pc-body .slide-meta {
+  margin-bottom: 0;
+}
+
+.pc-title {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pc-summary {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.pc-more {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.project-card:hover .pc-more {
+  color: var(--accent-ink);
+}
+
+/* ---------- Meta pill (dipakai di kartu & modal) ---------- */
+.slide-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+/* ---------- Pager ---------- */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.pager:empty {
+  display: none;
+}
+
+.pager-nums {
+  display: flex;
+  gap: 8px;
+}
+
+.pager-num,
+.pager-arrow {
+  min-width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.pager-num:hover,
+.pager-arrow:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.pager-num.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.pager-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pager-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ---------- Modal detail ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(17, 17, 20, 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-panel {
+  position: relative;
+  width: min(960px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 36px 40px 40px;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(12px);
+  transition: transform 0.4s var(--ease);
+}
+
+.modal.active .modal-panel {
+  transform: none;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  border-color: var(--ink);
+}
+
+.modal-title {
+  max-width: 760px;
+  padding-right: 48px;
+  font-size: clamp(22px, 2.6vw, 28px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.modal-shot {
+  margin-top: 24px;
+}
+
+.modal-shot img {
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  object-position: top left;
+}
+
+/* ---------- Info & footer (dipakai di modal) ---------- */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.info-block {
+  min-width: 0;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.info-label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.info-block--solution .info-label::before {
+  background: var(--teal);
+}
+
+.info-block--role .info-label::before {
+  background: var(--purple);
+}
+
+.info-block--result .info-label::before {
+  background: #c2185b;
+}
+
+.info-block p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.slide-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 32px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.slide-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.slide-stack span {
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: var(--bg-alt);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.slide-audience {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.slide-audience b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.slide-links {
+  display: flex;
+  gap: 10px;
+}
+
+.slide-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.slide-link:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.slide-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 32px;
+  }
+}
+
+@media (max-width: 760px) {
+  .project-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .pc-body {
+    padding: 20px;
+  }
+
+  .pc-title {
+    font-size: 17px;
+  }
+
+  .pc-summary {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .modal {
+    padding: 12px;
+  }
+
+  .modal-panel {
+    padding: 24px 18px 28px;
+    max-height: calc(100vh - 24px);
+  }
+
+  .modal-title {
+    font-size: 21px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin-top: 24px;
+    padding-top: 22px;
+  }
+
+  .slide-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .slide-links {
+    width: 100%;
+  }
+
+  .slide-links .slide-link {
+    flex: 1;
+    justify-content: center;
+  }
+}

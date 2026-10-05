@@ -1,0 +1,43 @@
+/* =========================================================
+   CONTACT — ajakan terakhir
+   ========================================================= */
+
+.contact-card {
+  position: relative;
+  overflow: hidden;
+  padding: 72px 40px;
+  text-align: center;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(10, 102, 255, 0.12), transparent 50%),
+    radial-gradient(circle at 85% 85%, rgba(15, 169, 140, 0.12), transparent 50%),
+    var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-card h2 {
+  font-size: clamp(30px, 4.4vw, 46px);
+  font-weight: 800;
+}
+
+.contact-card p {
+  max-width: 480px;
+  margin: 18px auto 0;
+  font-size: 17px;
+  color: var(--muted);
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 36px;
+}
+
+@media (max-width: 560px) {
+  .contact-card {
+    padding: 48px 24px;
+  }
+}

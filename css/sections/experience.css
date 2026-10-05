@@ -1,0 +1,233 @@
+/* =========================================================
+   EXPERIENCE — tab: daftar perusahaan di kiri, detail di kanan
+   ========================================================= */
+
+.exp {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.5fr);
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* ---------- Tab kiri ---------- */
+.exp-tabs {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-right: 1px solid var(--line);
+  background: var(--bg-alt);
+}
+
+.exp-tab {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.25s var(--ease);
+}
+
+.exp-tab:hover {
+  background: rgba(17, 17, 20, 0.04);
+}
+
+.exp-tab.is-active {
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.exp-tab-period {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.exp-tab.is-active .exp-tab-period {
+  color: #0b8a72;
+}
+
+.exp-tab-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.exp-tab.is-active .exp-tab-name {
+  color: var(--ink);
+}
+
+/* ---------- Detail kanan ---------- */
+.exp-body {
+  padding: 40px 44px;
+  min-height: 100%;
+}
+
+.exp-panel[hidden] {
+  display: none;
+}
+
+.exp-panel {
+  animation: exp-in 0.5s var(--ease);
+}
+
+@keyframes exp-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.exp-kind {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-alt);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Periode & perusahaan di dalam panel: hanya tampil di mobile */
+.exp-meta {
+  display: none;
+}
+
+.exp-panel h3 {
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.exp-points {
+  display: grid;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.exp-points li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.exp-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--gradient);
+}
+
+/* ---------- Tablet & mobile: tab jadi horizontal ---------- */
+@media (max-width: 860px) {
+  .exp {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .exp-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+
+  .exp-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .exp-tab {
+    flex: 0 0 auto;
+    min-width: 200px;
+  }
+
+  .exp-body {
+    padding: 28px 28px 32px;
+  }
+}
+
+/* ---------- Mobile: susunan vertikal, semua pengalaman terlihat ---------- */
+@media (max-width: 560px) {
+  .exp {
+    display: grid;
+    gap: 12px;
+    border: none;
+    background: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .exp-tabs {
+    display: none;
+  }
+
+  .exp-body {
+    display: grid;
+    gap: 12px;
+    padding: 0;
+  }
+
+  .exp-panel,
+  .exp-panel[hidden] {
+    display: block !important;
+    padding: 20px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    animation: none;
+  }
+
+  .exp-meta {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+
+  .exp-meta span {
+    font-weight: 700;
+    color: #0b8a72;
+  }
+
+  .exp-kind {
+    margin-bottom: 8px;
+  }
+
+  .exp-panel h3 {
+    font-size: 18px;
+  }
+
+  .exp-points {
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .exp-points li {
+    font-size: 14px;
+    line-height: 1.55;
+    padding-left: 18px;
+  }
+}
