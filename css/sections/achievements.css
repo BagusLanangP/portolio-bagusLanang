@@ -1,78 +1,82 @@
 /* =========================================================
-   ACHIEVEMENTS — penghargaan & organisasi
+   ACHIEVEMENTS — daftar bersih dua kolom, tanpa kartu:
+   hanya tipografi dan garis tipis pemisah
    ========================================================= */
 
-.achieve-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
+.ach-head {
+  margin-bottom: clamp(24px, 3.4vw, 48px);
 }
 
-.achieve-heading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  font-weight: 700;
+.ach-head h2 {
+  font-size: clamp(28px, 3.6vw, 52px);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.ach-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(40px, 6vw, 96px);
+}
+
+.ach-label {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ink);
+  font-size: 13px;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.achieve-heading::before {
-  content: "";
-  width: 18px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--gradient);
-}
-
-.achieve-list {
+.ach-row {
   display: grid;
-  gap: 14px;
+  grid-template-columns: 96px minmax(0, 1fr);
+  column-gap: 20px;
+  row-gap: 2px;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(17, 17, 20, 0.1);
+  transition: padding-left 0.4s var(--ease);
 }
 
-.achieve-card {
-  padding: 22px 24px;
+.ach-row:hover {
+  padding-left: 8px;
 }
 
-.achieve-top {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px 16px;
-}
-
-.achieve-title {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.achieve-date {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--teal);
-  white-space: nowrap;
-}
-
-.achieve-org {
-  margin-top: 4px;
+.ach-date {
+  grid-row: 1 / 3;
+  padding-top: 4px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--accent);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
-.achieve-card p {
-  margin-top: 10px;
-  font-size: 14px;
-  line-height: 1.65;
+.ach-title {
+  font-size: clamp(18px, 1.7vw, 22px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.ach-org {
+  font-size: 15px;
   color: var(--muted);
 }
 
 @media (max-width: 860px) {
-  .achieve-grid {
+  .ach-cols {
     grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .ach-row {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ach-row:hover {
+    padding-left: 0;
   }
 }

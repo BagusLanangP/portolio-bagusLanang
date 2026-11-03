@@ -1,141 +1,230 @@
 /* =========================================================
-   PROJECTS — grid kartu ringkas, pager, modal detail
-   Kartu dua kolom per baris. Klik kartu → modal berisi detail.
+   PROJECTS — carousel geser ala Apple: kartu bingkai gradasi
+   dengan jendela screenshot di dalamnya, teks di bawahnya.
+   Klik → modal detail.
    ========================================================= */
 
-/* ---------- Grid ---------- */
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.project-card {
+/* ---------- Carousel ---------- */
+.work-head {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  cursor: pointer;
-  padding: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(20px, 2.6vw, 36px);
 }
 
-.project-card:focus-visible {
-  outline: 2px solid var(--accent);
+.work-head h2 {
+  font-size: clamp(28px, 3.6vw, 52px);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.carousel-arrows {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel {
+  margin-inline: calc(var(--pad) * -1); /* track sampai tepi layar */
+}
+
+.carousel-track {
+  --slide-w: min(460px, 82vw);
+  display: flex;
+  gap: clamp(14px, 1.6vw, 24px);
+  overflow-x: auto;
+  padding: 8px var(--pad) 20px;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--pad);
+  scrollbar-width: none;
+  cursor: grab;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-track.dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.carousel-track.dragging * {
+  pointer-events: none;
+}
+
+.slide {
+  flex: 0 0 var(--slide-w);
+  scroll-snap-align: start;
+  display: grid;
+  gap: 16px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Bingkai gradasi: terang di atas, gelap di bawah */
+.slide-frame {
+  --g1: #bcd4e6;
+  --g2: #4b7fa6;
+  --g3: #0f2a52;
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.55;
+  overflow: hidden;
+  padding: clamp(10px, 1.5vw, 18px); /* bingkai tipis */
+  border-radius: clamp(20px, 2.2vw, 28px);
+  background: linear-gradient(180deg, var(--g1) 0%, var(--g2) 60%, var(--g3) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 1px 2px rgba(17, 17, 20, 0.06),
+    0 18px 40px -12px rgba(17, 17, 20, 0.28);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.slide-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, 0.45), transparent 60%);
+  pointer-events: none;
+}
+
+.slide[data-tone="1"] .slide-frame { --g1: #f6d9b8; --g2: #d98a52; --g3: #5a2a14; }
+.slide[data-tone="2"] .slide-frame { --g1: #cdeedd; --g2: #4fae86; --g3: #0f3d33; }
+.slide[data-tone="3"] .slide-frame { --g1: #dcd2f4; --g2: #8466d1; --g3: #251552; }
+.slide[data-tone="4"] .slide-frame { --g1: #f8d1de; --g2: #d8648c; --g3: #521230; }
+
+/* Screenshot ditampilkan utuh (tidak dipotong), diskalakan agar muat */
+.slide-window {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.slide-window img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  position: relative;
+  border-radius: clamp(10px, 1.2vw, 16px);
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.28);
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.slide:hover .slide-frame {
+  transform: translateY(-5px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 1px 2px rgba(17, 17, 20, 0.06),
+    0 30px 56px -12px rgba(17, 17, 20, 0.36);
+}
+
+.slide:focus-visible .slide-frame {
+  outline: 3px solid var(--accent);
   outline-offset: 4px;
 }
 
-/* Thumbnail: pakai gaya browser-bar dari components.css */
-.pc-thumb {
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.pc-thumb img {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: top left;
-}
-
-.pc-body {
+/* Teks di bawah kartu */
+.slide-caption {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 10px;
-  padding: 24px;
-}
-
-.pc-body .slide-meta {
-  margin-bottom: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-inline: 6px;
 }
 
 .pc-title {
-  font-size: 19px;
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: clamp(18px, 1.6vw, 22px);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 
-.pc-summary {
-  font-size: 15px;
-  line-height: 1.6;
+.pc-sub,
+.modal-sub {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
   color: var(--muted);
 }
 
 .pc-more {
-  margin-top: auto;
-  padding-top: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.project-card:hover .pc-more {
-  color: var(--accent-ink);
-}
-
-/* ---------- Meta pill (dipakai di kartu & modal) ---------- */
-.slide-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-/* ---------- Pager ---------- */
-.pager {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 40px;
-}
-
-.pager:empty {
-  display: none;
-}
-
-.pager-nums {
-  display: flex;
-  gap: 8px;
-}
-
-.pager-num,
-.pager-arrow {
-  min-width: 40px;
-  height: 40px;
+  flex: none;
   display: grid;
+  width: 34px;
+  height: 34px;
   place-items: center;
-  padding: 0 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--bg-alt);
+  font-size: 0;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
 }
 
-.pager-num:hover,
-.pager-arrow:hover:not(:disabled) {
-  border-color: var(--ink);
+.pc-more span {
+  font-size: 16px;
 }
 
-.pager-num.active {
+.slide:hover .pc-more {
   background: var(--ink);
-  border-color: var(--ink);
   color: #fff;
 }
 
-.pager-arrow svg {
-  width: 18px;
-  height: 18px;
+.carousel-arrow {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg-alt);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color 0.25s var(--ease),
+    color 0.25s var(--ease),
+    opacity 0.25s ease,
+    transform 0.25s var(--ease);
 }
 
-.pager-arrow:disabled {
+.carousel-arrow:hover:not(:disabled) {
+  background: var(--ink);
+  color: #fff;
+  transform: scale(1.06);
+}
+
+.carousel-arrow:disabled {
   opacity: 0.35;
   cursor: default;
 }
 
-/* ---------- Modal detail ---------- */
+.carousel-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- Meta ---------- */
+.slide-meta {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+
+/* ---------- Modal detail (melayang, jadi boleh bayangan) ---------- */
 .modal {
   position: fixed;
   inset: 0;
@@ -143,30 +232,30 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(17, 17, 20, 0.5);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  background: rgba(17, 17, 20, 0.6);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.3s var(--ease);
+  transition: opacity 0.3s var(--ease), visibility 0.3s;
 }
 
 .modal.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
 .modal-panel {
   position: relative;
-  width: min(960px, 100%);
+  width: min(1040px, 100%);
   max-height: calc(100vh - 48px);
   overflow-y: auto;
-  padding: 36px 40px 40px;
-  border-radius: var(--radius-xl);
-  background: var(--surface);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(12px);
-  transition: transform 0.4s var(--ease);
+  padding: clamp(24px, 4vw, 56px);
+  border-radius: var(--radius-img);
+  background: var(--bg);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35); /* taste-skill-ignore: dialog melayang */
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.5s var(--ease);
 }
 
 .modal.active .modal-panel {
@@ -177,32 +266,35 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 36px;
-  height: 36px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 50%;
-  background: var(--surface);
-  font-size: 20px;
+  background: var(--field);
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
+  transition: transform 0.2s var(--ease);
 }
 
 .modal-close:hover {
-  border-color: var(--ink);
+  transform: scale(1.08);
 }
 
 .modal-title {
-  max-width: 760px;
-  padding-right: 48px;
-  font-size: clamp(22px, 2.6vw, 28px);
-  font-weight: 800;
-  line-height: 1.2;
+  max-width: 24ch;
+  margin-top: 4px;
+  padding-right: 56px;
+  font-size: var(--t-h3);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
 }
 
 .modal-shot {
-  margin-top: 24px;
+  margin-top: 32px;
 }
 
 .modal-shot img {
@@ -211,55 +303,24 @@
   object-position: top left;
 }
 
-/* ---------- Info & footer (dipakai di modal) ---------- */
+/* ---------- Info & footer modal ---------- */
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 32px;
-  margin-top: 32px;
-  padding-top: 28px;
-  border-top: 1px solid var(--line);
-}
-
-.info-block {
-  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px clamp(32px, 4vw, 64px);
+  margin-top: 48px;
 }
 
 .info-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-}
-
-.info-label::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-.info-block--solution .info-label::before {
-  background: var(--teal);
-}
-
-.info-block--role .info-label::before {
-  background: var(--purple);
-}
-
-.info-block--result .info-label::before {
-  background: #c2185b;
+  margin-bottom: 8px;
+  font-size: var(--t-small);
+  font-weight: 600;
+  color: var(--accent-ink);
 }
 
 .info-block p {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: var(--t-body);
+  line-height: 1.6;
   color: var(--muted);
 }
 
@@ -269,9 +330,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px 32px;
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid var(--line);
+  margin-top: 48px;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--bg-alt);
 }
 
 .slide-stack {
@@ -281,15 +343,15 @@
 }
 
 .slide-stack span {
-  padding: 5px 11px;
-  border-radius: 8px;
-  background: var(--bg-alt);
-  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--field);
+  font-size: var(--t-small);
   font-weight: 500;
 }
 
 .slide-audience {
-  font-size: 13px;
+  font-size: var(--t-small);
   color: var(--muted);
 }
 
@@ -306,49 +368,31 @@
 .slide-link {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 16px;
-  border: 1px solid var(--line);
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
   border-radius: var(--radius-pill);
-  font-size: 13px;
+  background: var(--ink);
+  color: #fff;
+  font-size: var(--t-small);
   font-weight: 600;
-  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+  transition: transform 0.25s var(--ease);
 }
 
 .slide-link:hover {
-  border-color: var(--ink);
-  transform: translateY(-1px);
+  transform: scale(1.04);
 }
 
 .slide-link svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
+
 
 /* ---------- Responsive ---------- */
-@media (max-width: 960px) {
-  .info-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px 32px;
-  }
-}
-
-@media (max-width: 760px) {
-  .project-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
-  }
-
-  .pc-body {
-    padding: 20px;
-  }
-
-  .pc-title {
-    font-size: 17px;
-  }
-
-  .pc-summary {
-    font-size: 14px;
+@media (max-width: 860px) {
+  .carousel-track {
+    --slide-w: 82vw;
   }
 }
 
@@ -358,19 +402,12 @@
   }
 
   .modal-panel {
-    padding: 24px 18px 28px;
     max-height: calc(100vh - 24px);
-  }
-
-  .modal-title {
-    font-size: 21px;
   }
 
   .info-grid {
     grid-template-columns: 1fr;
-    gap: 22px;
-    margin-top: 24px;
-    padding-top: 22px;
+    margin-top: 36px;
   }
 
   .slide-foot {
@@ -385,5 +422,11 @@
   .slide-links .slide-link {
     flex: 1;
     justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-frame {
+    transition: none;
   }
 }

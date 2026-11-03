@@ -1,26 +1,21 @@
 /* =========================================================
-   PROJECT GRID — kartu ringkas + pagination + modal detail
+   PROJECT CAROUSEL — slide geser + modal detail
    Data dari js/projects.js
    ========================================================= */
 
 (function () {
-  const grid = document.getElementById("projectGrid");
-  const pager = document.getElementById("pager");
+  const grid = document.getElementById("projectTrack");
+  const prevBtn = document.getElementById("carPrev");
+  const nextBtn = document.getElementById("carNext");
   const modal = document.getElementById("projectModal");
   const modalBody = document.getElementById("modalBody");
   const closeBtn = document.getElementById("modalClose");
   if (!grid || typeof PROJECTS === "undefined") return;
 
-  const PAGE_SIZE = 6;
-
-  // Project dengan screenshot asli tampil di halaman pertama,
-  // sisanya (gambar kosong default) di halaman berikutnya
-  const WITH_SHOT = PROJECTS.filter((p) => p.image !== PLACEHOLDER_IMAGE);
-  const NO_SHOT = PROJECTS.filter((p) => p.image === PLACEHOLDER_IMAGE);
-  const PAGES = WITH_SHOT.length ? [WITH_SHOT] : [];
-  for (let i = 0; i < NO_SHOT.length; i += PAGE_SIZE) PAGES.push(NO_SHOT.slice(i, i + PAGE_SIZE));
-  const pageCount = PAGES.length;
-  let page = 0;
+  // Hanya project dengan screenshot asli yang masuk carousel
+  // (sisanya muncul otomatis begitu `image` diisi di projects.js)
+  const withShot = PROJECTS.filter((p) => p.image !== PLACEHOLDER_IMAGE);
+  const SLIDES = withShot.length ? withShot : PROJECTS;
   let lastFocus = null;
 
   const escapeHtml = (text) =>
@@ -42,27 +37,37 @@
     { key: "result", label: "Result", cls: "result" },
   ];
 
+  // Emoji di awal label dibuang: penanda dibawakan oleh teks itu sendiri
+  const plain = (label) => label.replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u, "");
+
   const pills = (meta, limit) =>
     meta
       .slice(0, limit ?? meta.length)
-      .map((m) => `<span class="pill${m.variant ? ` pill--${m.variant}` : ""}">${escapeHtml(m.label)}</span>`)
+      .map((m) => `<span class="pill${m.variant ? ` pill--${m.variant}` : ""}">${escapeHtml(plain(m.label))}</span>`)
       .join("");
 
   // Kartu ringkas: hanya judul, meta singkat, dan ringkasan
-  function renderCard(project, index) {
+  // "Nama — keterangan": nama jadi judul, keterangan jadi anak judul
+  const splitTitle = (title) => {
+    const [name, ...rest] = title.split(" — ");
+    return { name, sub: rest.join(" — ") };
+  };
+
+  function renderCard(project, index, slideNo) {
+    const t = splitTitle(project.title);
     return `
-      <article class="card card--lift project-card" role="button" tabindex="0" data-open="${index}">
-        <div class="pc-thumb">
-          <div class="browser-bar">
-            <div class="browser-dots"><span></span><span></span><span></span></div>
-            <div class="browser-url">${escapeHtml(project.url)}</div>
+      <article class="slide" role="button" tabindex="0" data-open="${index}" data-tone="${slideNo % 5}"
+               aria-label="${escapeHtml(project.title)}">
+        <div class="slide-frame">
+          <div class="slide-window">
+            <img src="${escapeHtml(project.image)}" alt="${escapeHtml(project.alt)}" draggable="false" ${slideNo > 1 ? 'loading="lazy"' : ""} />
           </div>
-          <img src="${escapeHtml(project.image)}" alt="${escapeHtml(project.alt)}" loading="lazy" />
         </div>
-        <div class="pc-body">
-          <div class="slide-meta">${pills(project.meta, 2)}</div>
-          <h3 class="pc-title">${escapeHtml(project.title)}</h3>
-          <p class="pc-summary">${escapeHtml(project.summary)}</p>
+        <div class="slide-caption">
+          <div>
+            <h3 class="pc-title">${escapeHtml(t.name)}</h3>
+            ${t.sub ? `<p class="pc-sub">${escapeHtml(t.sub)}</p>` : ""}
+          </div>
           <span class="pc-more">Lihat detail <span aria-hidden="true">→</span></span>
         </div>
       </article>`;
@@ -87,9 +92,11 @@
       .map((l) => `<a class="slide-link" href="${l.href}" target="_blank" rel="noopener">${l.icon}${l.label}</a>`)
       .join("");
 
+    const t = splitTitle(project.title);
     return `
-      <div class="slide-meta">${pills(project.meta)}</div>
-      <h2 class="modal-title" id="modalTitle">${escapeHtml(project.title)}</h2>
+      <h2 class="modal-title" id="modalTitle">${escapeHtml(t.name)}</h2>
+      ${t.sub ? `<p class="modal-sub">${escapeHtml(t.sub)}</p>` : ""}
+      <div class="slide-meta" style="margin-top:12px">${pills(project.meta)}</div>
 
       <div class="modal-shot browser" role="button" tabindex="0"
            data-lightbox="${escapeHtml(project.image)}"
@@ -115,38 +122,69 @@
   }
 
   function renderGrid() {
-    const items = PAGES[page];
-    grid.innerHTML = items.map((p) => renderCard(p, PROJECTS.indexOf(p))).join("");
-    grid.setAttribute("aria-live", "polite");
+    grid.innerHTML = SLIDES.map((p, i) => renderCard(p, PROJECTS.indexOf(p), i)).join("");
   }
 
-  function renderPager() {
-    if (pageCount <= 1) {
-      pager.innerHTML = "";
-      return;
+  // ---- Carousel: panah + drag mouse (sentuhan memakai scroll native) ----
+  const step = () => {
+    const s = grid.firstElementChild;
+    return s ? s.offsetWidth + parseFloat(getComputedStyle(grid).columnGap || 0) : 300;
+  };
+
+  function updateArrows() {
+    const max = grid.scrollWidth - grid.clientWidth - 2;
+    prevBtn.disabled = grid.scrollLeft <= 2;
+    nextBtn.disabled = grid.scrollLeft >= max;
+  }
+
+  let raf = 0;
+  grid.addEventListener("scroll", () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(updateArrows);
+  });
+  window.addEventListener("resize", updateArrows);
+
+  prevBtn.addEventListener("click", () => grid.scrollBy({ left: -step(), behavior: "smooth" }));
+  nextBtn.addEventListener("click", () => grid.scrollBy({ left: step(), behavior: "smooth" }));
+  grid.addEventListener("keydown", (e) => {
+    if (e.target !== grid) return;
+    if (e.key === "ArrowRight") nextBtn.click();
+    if (e.key === "ArrowLeft") prevBtn.click();
+  });
+
+  // Drag dengan mouse (sentuhan sudah ditangani scroll native)
+  let dragX = 0;
+  let startLeft = 0;
+  let down = false;
+  let moved = false;
+  grid.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    down = true;
+    moved = false;
+    dragX = e.clientX;
+    startLeft = grid.scrollLeft;
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!down) return;
+    const dx = e.clientX - dragX;
+    if (!moved && Math.abs(dx) > 6) {
+      moved = true;
+      grid.classList.add("dragging");
     }
-    const numbers = Array.from({ length: pageCount }, (_, i) =>
-      `<button class="pager-num${i === page ? " active" : ""}" data-page="${i}" aria-label="Halaman ${i + 1}"${
-        i === page ? ' aria-current="page"' : ""
-      }>${i + 1}</button>`,
-    ).join("");
-    pager.innerHTML = `
-      <button class="pager-arrow" data-step="-1" aria-label="Halaman sebelumnya"${page === 0 ? " disabled" : ""}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6" /></svg>
-      </button>
-      <div class="pager-nums">${numbers}</div>
-      <button class="pager-arrow" data-step="1" aria-label="Halaman berikutnya"${
-        page === pageCount - 1 ? " disabled" : ""
-      }>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6" /></svg>
-      </button>`;
-  }
-
-  function goTo(i) {
-    page = Math.min(Math.max(i, 0), pageCount - 1);
-    renderGrid();
-    renderPager();
-  }
+    if (moved) grid.scrollLeft = startLeft - dx;
+  });
+  window.addEventListener("pointerup", () => {
+    if (!down) return;
+    down = false;
+    if (moved) {
+      grid.classList.remove("dragging");
+      // snap ke slide terdekat setelah drag
+      const target = Math.round(grid.scrollLeft / step()) * step();
+      grid.scrollTo({ left: target, behavior: "smooth" });
+      // cegah klik yang menyusul setelah drag membuka modal
+      grid.addEventListener("click", (ev) => ev.stopPropagation(), { capture: true, once: true });
+    }
+  });
 
   function openModal(index) {
     lastFocus = document.activeElement;
@@ -169,7 +207,8 @@
   // Event delegation untuk kartu, pager, dan modal
   grid.addEventListener("click", (e) => {
     const card = e.target.closest("[data-open]");
-    if (card) openModal(Number(card.dataset.open));
+    if (!card) return;
+    openModal(Number(card.dataset.open));
   });
 
   grid.addEventListener("keydown", (e) => {
@@ -178,13 +217,6 @@
       e.preventDefault();
       openModal(Number(card.dataset.open));
     }
-  });
-
-  pager.addEventListener("click", (e) => {
-    const num = e.target.closest("[data-page]");
-    if (num) return goTo(Number(num.dataset.page));
-    const arrow = e.target.closest("[data-step]");
-    if (arrow && !arrow.disabled) goTo(page + Number(arrow.dataset.step));
   });
 
   closeBtn.addEventListener("click", closeModal);
@@ -199,5 +231,6 @@
     closeModal();
   });
 
-  goTo(0);
+  renderGrid();
+  updateArrows();
 })();

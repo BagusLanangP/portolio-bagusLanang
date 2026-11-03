@@ -1,28 +1,33 @@
 /* =========================================================
-   COMPONENTS — buttons, pills, cards, browser frame, lightbox
+   COMPONENTS — buttons, meta, browser frame, lightbox
    ========================================================= */
 
 /* ---------- Buttons ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 13px 26px;
-  border: 1px solid transparent;
+  min-height: 48px;
+  padding: 0 28px;
+  border: 0;
   border-radius: var(--radius-pill);
-  font-size: 15px;
+  font-size: var(--t-body);
   font-weight: 600;
+  letter-spacing: -0.01em;
   cursor: pointer;
   transition:
-    background 0.25s var(--ease),
+    background-color 0.25s var(--ease),
     color 0.25s var(--ease),
-    border-color 0.25s var(--ease),
-    transform 0.25s var(--ease),
-    box-shadow 0.25s var(--ease);
+    transform 0.25s var(--ease);
 }
 
 .btn:hover {
-  transform: translateY(-2px);
+  transform: scale(1.03);
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
@@ -32,135 +37,81 @@
 
 .btn-primary:hover {
   background: var(--accent-ink);
+}
+
+/* Di atas bidang berwarna (biru / hitam) tombol utama dibalik */
+.chapter--blue .btn-primary,
+.chapter--ink .btn-primary {
+  background: #fff;
+  color: var(--ink);
+}
+
+.chapter--blue .btn-primary:hover,
+.chapter--ink .btn-primary:hover {
+  background: var(--ink);
   color: #fff;
-  box-shadow: 0 12px 28px rgba(10, 102, 255, 0.25);
 }
 
-.btn-secondary {
-  background: var(--surface);
-  color: var(--ink);
-  border-color: var(--line);
-}
-
-.btn-secondary:hover {
-  border-color: var(--ink);
-}
-
-/* ---------- Pills & chips ---------- */
-.chip {
+/* Tautan teks dengan panah — aksi kedua */
+.link-arrow {
   display: inline-flex;
   align-items: center;
-  padding: 7px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink);
+  gap: 6px;
+  min-height: 44px;
+  font-size: var(--t-body);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
+.link-arrow::after {
+  content: "→";
+  transition: transform 0.25s var(--ease);
+}
+
+.link-arrow:hover::after {
+  transform: translateX(4px);
+}
+
+/* ---------- Meta project (teks polos, bukan pil) ---------- */
 .pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 12px;
-  border-radius: var(--radius-pill);
-  background: var(--bg-alt);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink);
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.pill + .pill::before {
+  content: "·";
+  margin: 0 8px;
+  color: var(--muted);
 }
 
 .pill--accent {
-  background: rgba(10, 102, 255, 0.08);
   color: var(--accent-ink);
+  font-weight: 600;
 }
 
 .pill--gold {
-  background: linear-gradient(135deg, #ffd76a, var(--gold));
-  color: #5c3d00;
+  color: var(--ink);
+  font-weight: 600;
 }
 
-/* ---------- Card surface ---------- */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.card--lift {
-  transition:
-    transform 0.35s var(--ease),
-    box-shadow 0.35s var(--ease);
-}
-
-.card--lift:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-/* ---------- Icon tile (dipakai di skill & cert) ---------- */
-.icon-tile {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  color: #fff;
-}
-
-.icon-tile svg {
-  width: 18px;
-  height: 18px;
-}
-
-.grad-blue {
-  background: linear-gradient(135deg, #4b9cff, #0a66ff);
-}
-
-.grad-purple {
-  background: linear-gradient(135deg, #9d8cff, #6c5ce7);
-}
-
-.grad-teal {
-  background: linear-gradient(135deg, #3fdcc0, #0fa98c);
-}
-
-.grad-slate {
-  background: linear-gradient(135deg, #6e6e76, #3a3a3e);
-}
-
-/* ---------- Browser frame (screenshot project) ---------- */
+/* ---------- Browser frame (screenshot di modal) ---------- */
 .browser {
   display: flex;
   flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  background: var(--field);
+  border-radius: var(--radius-img);
   overflow: hidden;
   cursor: zoom-in;
-  transition:
-    transform 0.4s var(--ease),
-    box-shadow 0.4s var(--ease);
-}
-
-.browser:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
 }
 
 .browser-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 38px;
-  padding: 0 14px;
-  background: var(--bg-alt);
-  border-bottom: 1px solid var(--line);
+  height: 40px;
+  padding: 0 16px;
+  background: var(--field);
 }
 
 .browser-dots {
@@ -169,21 +120,20 @@
 }
 
 .browser-dots span {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #d4d4d9;
+  background: #c4c4cb;
 }
 
 .browser-url {
   flex: 1;
   min-width: 0;
-  padding: 3px 10px;
-  border-radius: 6px;
-  background: var(--surface);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
-  color: var(--muted-2);
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  font-size: var(--t-small);
+  color: var(--muted);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -193,6 +143,15 @@
 .browser-body img {
   width: 100%;
   height: auto;
+  transition: transform 0.8s var(--ease);
+}
+
+.browser:hover .browser-body img {
+  transform: scale(1.02);
+}
+
+.browser-body {
+  overflow: hidden;
 }
 
 /* ---------- Lightbox ---------- */
@@ -203,60 +162,54 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(10, 10, 12, 0.85);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(10, 10, 12, 0.92);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.3s var(--ease);
+  transition: opacity 0.3s var(--ease), visibility 0.3s;
 }
 
 .lightbox.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
 .lightbox-figure {
   position: relative;
-  max-width: min(1100px, 92vw);
+  max-width: min(1280px, 94vw);
   margin: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-img);
   overflow: hidden;
-  background: var(--surface);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  background: var(--bg);
 }
 
 .lightbox-figure img {
-  max-height: 84vh;
+  max-height: 82vh;
   width: 100%;
   object-fit: contain;
 }
 
 .lightbox-figure figcaption {
-  padding: 12px 18px;
-  font-size: 13px;
+  padding: 14px 20px;
+  font-size: var(--t-small);
   color: var(--muted);
   text-align: center;
-  border-top: 1px solid var(--line);
 }
 
 .lightbox-close {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
-  border: none;
+  border: 0;
   border-radius: 50%;
-  background: rgba(17, 17, 20, 0.7);
+  background: var(--ink);
   color: #fff;
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
-}
-
-.lightbox-close:hover {
-  background: var(--ink);
 }

@@ -17,7 +17,7 @@ const PROJECTS = [
     meta: [
       { label: "Lead Developer", variant: "accent" },
       { label: "Team of 10" },
-      { label: "🏆 1st Place Capstone", variant: "gold" },
+      { label: "1st Place Capstone", variant: "gold" },
       { label: "2024" },
     ],
     stack: ["FastAPI", "Google Gemini API", "Leaflet", "SQLite", "Python", "Streamlit"],
@@ -68,7 +68,7 @@ const PROJECTS = [
     meta: [
       { label: "Data Analyst", variant: "accent" },
       { label: "Team of 3" },
-      { label: "🏆 2nd Place Sickathon", variant: "gold" },
+      { label: "2nd Place Sickathon", variant: "gold" },
       { label: "2023" },
     ],
     stack: ["React.js (TypeScript)", "FastAPI", "Scikit-Learn (ML)", "BeautifulSoup", "Pandas"],
